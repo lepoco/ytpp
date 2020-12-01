@@ -24,6 +24,7 @@ class YTP
 	#_isIos        = false;
 
 	#_videos       = [];
+	#_player;
 
 	constructor(configuration = null)
 	{
@@ -123,27 +124,16 @@ class YTP
 	Create()
 	{
 		this.#RequestApiScript();
-		this.#GetVideos();
-
-		
 	}
 
-	#RequestApiScript()
+	GetVideos()
 	{
-		if(this.#_debug)
-			YTP.#ConsoleWrite('Loading YouTube API');
+		let YTP_Hook = this;
 
-		let iframeApi = document.createElement('script');
-		iframeApi.src = 'https://www.youtube.com/iframe_api';
-
-		let firstScriptTag = document.getElementsByTagName('script')[0];
-		firstScriptTag.parentNode.insertBefore(iframeApi, firstScriptTag);
-	}
-
-	#GetVideos()
-	{
 		let playlistUris = [];
 		let videos = [];
+
+		let loops = 0;
 		let counter = 0;
 
 		for (let n=0; n < this.#_playlists.length; n++)
@@ -183,9 +173,13 @@ class YTP
 									};
 									counter++;
 								}
-							}
 
-							
+								loops++;
+								if(loops == playlistUris.length)
+								{
+									YTP_Hook.CreateIframe();
+								}
+							}
 						}
 					}
 					else if (xmlhttp.status == 400)
@@ -209,6 +203,102 @@ class YTP
 
 		if(this.#_debug)
 			YTP.#ConsoleWrite( 'Videos', '#fff', this.#_videos );
+	}
+
+	CreateIframe()
+	{
+		let configuration =
+		{
+			playerVars:
+			{
+				'html5':          1,
+				'fs':             0,
+				'playsinline':    1,
+				'modestbranding': 1,
+				'showinfo':       this.#_showInfo ? 1 : 0,
+				'autoplay':       this.#_autoplay ? 1 : 0,
+				'rel':            this.#_showRelated ? 1 : 0,
+				'controls':       this.#_showControls ? 1 : 0
+			},
+			videoId: this.#_videos[0].id
+		};
+		//https://www.youtube.com/embed/7IhGIB5XNEQ?rel=0&showinfo=0&playlist=7IhGIB5XNEQ&modestbranding=1&controls=0&loop=1&showinfo=0&autoplay=0&fs=0
+
+		if(this.#_debug)
+			YTP.#ConsoleWrite( 'IFrame configuration', '#fff', configuration );
+
+
+		let container = document.createElement('div');
+		container.classList.add('ytp-frame');
+		container.classList.add('ytp-frame__rounded');
+		container.classList.add('ytp-v16by9');
+
+		let subcontainer = document.createElement('div');
+		subcontainer.classList.add('embed-responsive-item');
+		subcontainer.style.position = "absolute";
+		subcontainer.style.top = 0;
+		subcontainer.style.left = 0;
+		subcontainer.style.width = "100%";
+		subcontainer.style.height = "100%";
+		subcontainer.style.border = "none";
+
+		container.appendChild(subcontainer);
+		this.#_container.appendChild(container);
+		this.#_player =  new YT.Player( subcontainer, configuration );
+
+		this.#CreateCarousel();
+	}
+
+	#CreateCarousel()
+	{
+		let single;
+		let container = document.createElement('div');
+		container.classList.add('ytp-carousel');
+
+		for (let i = 0; i < this.#_videos.length; i++)
+		{
+			single = document.createElement('div');
+			single.classList.add( 'ytp-playlist-' + i );
+			single.classList.add( 'ytp-item' );
+			single.classList.add( 'ytp-item__rounded' );
+
+			let image = document.createElement('img');
+			image.src = this.#_videos[i].thumbnail;
+			single.appendChild(image);
+
+			if(this.#_showTitles)
+			{
+				let title = document.createElement('p');
+				title.innerHTML = this.#_videos[i].title;
+				single.appendChild(title);
+			}
+
+			container.appendChild(single);
+		}
+		this.#_container.appendChild(container);
+
+	}
+
+	#RequestApiScript()
+	{
+		//https://developers.google.com/youtube/iframe_api_reference?hl=pl
+
+		if(this.#_debug)
+			YTP.#ConsoleWrite('Loading YouTube API');
+
+		let YTP_Hook = this;
+
+		let tag = document.createElement('script');
+		tag.src = "https://www.youtube.com/iframe_api";
+		let firstScriptTag = document.getElementsByTagName('script')[0];
+		firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+		window.onYouTubeIframeAPIReady = function ()
+		{
+			YTP_Hook.GetVideos();
+		};
+
+		//iframeApi.onload = function(){}
 	}
 
 	#MobileDetector()
