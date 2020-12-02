@@ -8,7 +8,7 @@ YouTube Playlist Player
 <script src="https://example.com/ytpp/js/ytpp.min.js" crossorigin="anonymous"></script>
 ```
 
-**Place the player wherever you like*
+**Place the player wherever you like**
 ```html
 <div class="ytpp-player"
   data-playlist="PLpsBoYnu3xNbKE_i7crf55E8h7lgHp4bt"
