@@ -1,63 +1,63 @@
 /*!
- * YTP v1.0.0 (https://github.com/rapiddev/ytp)
+ * YTPP v1.0.0 (https://github.com/rapiddev/ytpp)
  * Copyright 2011-2020 The RapidDev | Leszek Pomianowski (https://rdev.cc/)
- * Licensed under MPL-2.0 (https://github.com/rapiddev/ytp/blob/main/LICENSE)
+ * Licensed under MPL-2.0 (https://github.com/rapiddev/ytpp/blob/main/LICENSE)
  */
-	.ytp-frame {
+	.ytpp-frame {
 		position: relative;
 		background: transparent;
 		height: 0;
 		overflow: hidden;
 	}
 
-	.ytp-frame.ytp-frame__rounded {
+	.ytpp-frame.ytpp-frame__rounded {
 		border-radius: 2rem;
 	}
 
 
-	.ytp-frame.ytp-v16by9 {
+	.ytpp-frame.ytpp-v16by9 {
 		padding-bottom: 56.25%;
 	}
 
-	.ytp-frame.ytp-v21by9 {
+	.ytpp-frame.ytpp-v21by9 {
 		padding-bottom: 41.6%;
 	}
 
-	.ytp-frame.ytp-v2by1 {
+	.ytpp-frame.ytpp-v2by1 {
 		padding-bottom: 50%;
 	}
 
-	.ytp-carousel {
+	.ytpp-carousel {
 		width: 100%;
 		display: flex;
 		margin-top: 1rem;
 	}
 
-	.ytp-carousel .ytp-item:not(:first-child):not(:last-child) {
+	.ytpp-carousel .ytpp-item:not(:first-child):not(:last-child) {
 		padding-left: 5px;
 		padding-right: 5px;
 	}
 
-	.ytp-item {
+	.ytpp-item {
 		opacity: 0.8;
 		cursor: pointer;
 		transition: all ease-in-out .2s;
 	}
 
-	.ytp-item.active,
-	.ytp-item:hover {
+	.ytpp-item.active,
+	.ytpp-item:hover {
 		opacity: 1;
 		transform: scale(1.07);
 	}
 
-	.ytp-item img {
+	.ytpp-item img {
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
     	object-position: center;
 	}
 
-	.ytp-item.ytp-item__rounded,
-	.ytp-item.ytp-item__rounded img {
+	.ytpp-item.ytpp-item__rounded,
+	.ytpp-item.ytpp-item__rounded img {
 		border-radius: .4rem;
 	}

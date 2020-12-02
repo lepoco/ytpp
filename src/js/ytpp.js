@@ -1,9 +1,9 @@
 /*!
- * YTP v1.0.0 (https://github.com/rapiddev/ytp)
+ * YTPP v1.0.0 (https://github.com/rapiddev/ytpp)
  * Copyright 2011-2020 The RapidDev | Leszek Pomianowski (https://rdev.cc/)
- * Licensed under MPL-2.0 (https://github.com/rapiddev/ytp/blob/main/LICENSE)
+ * Licensed under MPL-2.0 (https://github.com/rapiddev/ytpp/blob/main/LICENSE)
  */
-class YTP
+class YTPP
 {
 	static #_version = '1.0.0';
 
@@ -71,16 +71,16 @@ class YTP
 		{
 			if(!this.#_auto)
 			{
-				console.log( '================\n YouTube Player\n================\nhttps://rdev.cc/\nv.' + YTP.#_version );
-				YTP.#ConsoleWrite( 'Debug mode enabled' );
-				YTP.#ConsoleWrite( 'Loaded configuration', '#fff', configuration );
+				console.log( '================\n YouTube Player\n================\nhttps://rdev.cc/\nv.' + YTPP.#_version );
+				YTPP.#ConsoleWrite( 'Debug mode enabled' );
+				YTPP.#ConsoleWrite( 'Loaded configuration', '#fff', configuration );
 			}
 
 			if(this.#_playlists != '')
-				YTP.#ConsoleWrite( 'Playlists - ', '#fff', this.#_playlists );
+				YTPP.#ConsoleWrite( 'Playlists - ', '#fff', this.#_playlists );
 			
 			if(this.#_apiKey != '')
-				YTP.#ConsoleWrite( 'API Key - ', '#fff', this.#_apiKey );
+				YTPP.#ConsoleWrite( 'API Key - ', '#fff', this.#_apiKey );
 		}
 
 		this.#MobileDetector();
@@ -89,14 +89,14 @@ class YTP
 
 	Auto()
 	{
-		if (document.getElementsByClassName('ytp-player').length == 0)
+		if (document.getElementsByClassName('ytpp-player').length == 0)
 			return;
 
 		let configuration;
-		let players = document.getElementsByClassName('ytp-player');
+		let players = document.getElementsByClassName('ytpp-player');
 
 		if(this.#_debug)
-			YTP.#ConsoleWrite( 'Players detected: - ', '#fff', players.length );
+			YTPP.#ConsoleWrite( 'Players detected: - ', '#fff', players.length );
 
 		for (let i = 0; i < players.length; i++)
 		{
@@ -106,18 +106,18 @@ class YTP
 				playlists: players.item(i).dataset.hasOwnProperty('playlist') ? [players.item(i).dataset.playlist] : this.#_playlists,
 				api: players.item(i).dataset.hasOwnProperty('api') ? players.item(i).dataset.api : this.#_apiKey,
 				
-				debug: players.item(i).dataset.hasOwnProperty('debug') ? YTP.#ParseTrue(players.item(i).dataset.debug) : this.#_debug,
-				autoplay: players.item(i).dataset.hasOwnProperty('autoplay') ? YTP.#ParseTrue(players.item(i).dataset.autoplay) : this.#_autoplay,
+				debug: players.item(i).dataset.hasOwnProperty('debug') ? YTPP.#ParseTrue(players.item(i).dataset.debug) : this.#_debug,
+				autoplay: players.item(i).dataset.hasOwnProperty('autoplay') ? YTPP.#ParseTrue(players.item(i).dataset.autoplay) : this.#_autoplay,
 				show:
 				{
-					controls: players.item(i).dataset.hasOwnProperty('showcontrols') ? YTP.#ParseTrue(players.item(i).dataset.showcontrols) : this.#_showControls,
-					titles: players.item(i).dataset.hasOwnProperty('showtitles') ? YTP.#ParseTrue(players.item(i).dataset.showtitles) : this.#_showTitles,
-					info: players.item(i).dataset.hasOwnProperty('showinfo') ? YTP.#ParseTrue(players.item(i).dataset.showinfo) : this.#_showInfo,
-					related: players.item(i).dataset.hasOwnProperty('showrelated') ? YTP.#ParseTrue(players.item(i).dataset.showrelated) : this.#_showRelated
+					controls: players.item(i).dataset.hasOwnProperty('showcontrols') ? YTPP.#ParseTrue(players.item(i).dataset.showcontrols) : this.#_showControls,
+					titles: players.item(i).dataset.hasOwnProperty('showtitles') ? YTPP.#ParseTrue(players.item(i).dataset.showtitles) : this.#_showTitles,
+					info: players.item(i).dataset.hasOwnProperty('showinfo') ? YTPP.#ParseTrue(players.item(i).dataset.showinfo) : this.#_showInfo,
+					related: players.item(i).dataset.hasOwnProperty('showrelated') ? YTPP.#ParseTrue(players.item(i).dataset.showrelated) : this.#_showRelated
 				}
 			};
 
-			( new YTP(configuration).Create() );
+			( new YTPP(configuration).Create() );
 		}
 	}
 
@@ -128,7 +128,7 @@ class YTP
 
 	GetVideos()
 	{
-		let YTP_Hook = this;
+		let YTPP_Hook = this;
 
 		let playlistUris = [];
 		let videos = [];
@@ -177,7 +177,7 @@ class YTP
 								loops++;
 								if(loops == playlistUris.length)
 								{
-									YTP_Hook.CreateIframe();
+									YTPP_Hook.CreateIframe();
 								}
 							}
 						}
@@ -185,12 +185,12 @@ class YTP
 					else if (xmlhttp.status == 400)
 					{
 						if(this.#_debug)
-							YTP.#ConsoleWrite( 'There was an error 400 when quering videos' );
+							YTPP.#ConsoleWrite( 'There was an error 400 when quering videos' );
 					}
 					else
 					{
 						if(this.#_debug)
-							YTP.#ConsoleWrite( 'Something else other than 200 was returned when quering videos' );
+							YTPP.#ConsoleWrite( 'Something else other than 200 was returned when quering videos' );
 					}
 				}
 			};
@@ -202,7 +202,7 @@ class YTP
 		this.#_videos = videos;
 
 		if(this.#_debug)
-			YTP.#ConsoleWrite( 'Videos', '#fff', this.#_videos );
+			YTPP.#ConsoleWrite( 'Videos', '#fff', this.#_videos );
 	}
 
 	CreateIframe()
@@ -224,13 +224,13 @@ class YTP
 		};
 
 		if(this.#_debug)
-			YTP.#ConsoleWrite( 'IFrame configuration', '#fff', configuration );
+			YTPP.#ConsoleWrite( 'IFrame configuration', '#fff', configuration );
 
 
 		let container = document.createElement('div');
-		container.classList.add('ytp-frame');
-		container.classList.add('ytp-frame__rounded');
-		container.classList.add('ytp-v16by9');
+		container.classList.add('ytpp-frame');
+		container.classList.add('ytpp-frame__rounded');
+		container.classList.add('ytpp-v16by9');
 
 		let subcontainer = document.createElement('div');
 		subcontainer.classList.add('embed-responsive-item');
@@ -254,27 +254,21 @@ class YTP
 
 		let player = this.#_player;
 		let container = document.createElement('div');
-		container.classList.add('ytp-carousel');
+		container.classList.add('ytpp-carousel');
 
 		for (let i = 0; i < this.#_videos.length; i++)
 		{
 			single = document.createElement('div');
-			single.classList.add( 'ytp-playlist-' + i );
-			single.classList.add( 'ytp-item' );
-			single.classList.add( 'ytp-item__rounded' );
+			single.classList.add( 'ytpp-playlist-' + i );
+			single.classList.add( 'ytpp-item' );
+			single.classList.add( 'ytpp-item__rounded' );
 
 			single.dataset.id = this.#_videos[i].id; 
-
 			single.onclick = function( )
 			{
-				console.log(this);
-
-
-				let elements = document.getElementsByClassName('ytp-item active');
-				while(elements.length > 0)
-				{
-				    elements[0].classList.remove('active');
-				}
+				let selectedItems = document.getElementsByClassName('ytpp-item active');
+				while(selectedItems.length > 0)
+				    selectedItems[0].classList.remove('active');
 
 				this.classList.add( 'active' );
 				player.loadVideoById({ videoId: this.dataset.id });
@@ -305,9 +299,9 @@ class YTP
 		//https://developers.google.com/youtube/iframe_api_reference?hl=pl
 
 		if(this.#_debug)
-			YTP.#ConsoleWrite('Loading YouTube API');
+			YTPP.#ConsoleWrite('Loading YouTube API');
 
-		let YTP_Hook = this;
+		let YTPP_Hook = this;
 
 		let tag = document.createElement('script');
 		tag.src = "https://www.youtube.com/iframe_api";
@@ -316,7 +310,7 @@ class YTP
 
 		window.onYouTubeIframeAPIReady = function ()
 		{
-			YTP_Hook.GetVideos();
+			YTPP_Hook.GetVideos();
 		};
 
 		//iframeApi.onload = function(){}
@@ -329,11 +323,11 @@ class YTP
 
 		if(this.#_debug)
 			if(this.#_isMobile && this.#_isIos)
-				YTP.#ConsoleWrite('iOS device');
+				YTPP.#ConsoleWrite('iOS device');
 			else if(this.#_isMobile)
-				YTP.#ConsoleWrite('Mobile device');
+				YTPP.#ConsoleWrite('Mobile device');
 			else
-				YTP.#ConsoleWrite('Desktop device');
+				YTPP.#ConsoleWrite('Desktop device');
 	}
 
 	static #ParseTrue( value )
@@ -344,8 +338,8 @@ class YTP
 	static #ConsoleWrite(message, color="#fff", data = null )
 	{
 		if(data != null)
-			console.log( "%cYTP: "+"%c" + message, "color:#dc3545;font-weight: bold;", "color: " + color, data );
+			console.log( "%cYTPP: "+"%c" + message, "color:#dc3545;font-weight: bold;", "color: " + color, data );
 		else
-			console.log( "%cYTP: "+"%c" + message, "color:#dc3545;font-weight: bold;", "color: " + color );
+			console.log( "%cYTPP: "+"%c" + message, "color:#dc3545;font-weight: bold;", "color: " + color );
 	}
 }
