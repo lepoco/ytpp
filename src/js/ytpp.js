@@ -17,12 +17,12 @@ class YTPP
 	#_format       = '16by9';
 	#_loop         = false;
 	#_rounded      = true;
-	#_autoplay     = true;
+	#_autoplay     = false;
 	#_playnext     = true;
 	#_showControls = true;
-	#_showTitles   = true;
-	#_showInfo     = true;
-	#_showRelated  = true;
+	#_showTitles   = false;
+	#_showInfo     = false;
+	#_showRelated  = false;
 
 	#_isMobile     = false;
 	#_isIos        = false;
