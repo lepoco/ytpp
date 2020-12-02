@@ -14,6 +14,7 @@ class YTPP
 	#_auto         = false;
 	#_debug        = false;
 
+	#_format       = '16by9';
 	#_loop         = false;
 	#_rounded      = true;
 	#_autoplay     = true;
@@ -51,6 +52,9 @@ class YTPP
 
 		if(configuration.hasOwnProperty('loop'))
 			this.#_loop = configuration.loop;
+
+		if(configuration.hasOwnProperty('format'))
+			this.#_format = configuration.format;
 
 		if(configuration.hasOwnProperty('rounded'))
 			this.#_rounded = configuration.rounded;
@@ -123,6 +127,7 @@ class YTPP
 				debug: players.item(i).dataset.hasOwnProperty('debug') ? YTPP.#ParseTrue(players.item(i).dataset.debug) : this.#_debug,
 				autoplay: players.item(i).dataset.hasOwnProperty('autoplay') ? YTPP.#ParseTrue(players.item(i).dataset.autoplay) : this.#_autoplay,
 				playnext: players.item(i).dataset.hasOwnProperty('playnext') ? YTPP.#ParseTrue(players.item(i).dataset.playnext) : this.#_playnext,
+				format: players.item(i).dataset.hasOwnProperty('format') ? players.item(i).dataset.format : this.#_format,
 				loop: players.item(i).dataset.hasOwnProperty('loop') ? players.item(i).dataset.loop : this.#_loop,
 				rounded: players.item(i).dataset.hasOwnProperty('rounded') ? YTPP.#ParseTrue(players.item(i).dataset.rounded) : this.#_rounded,
 
@@ -232,12 +237,14 @@ class YTPP
 			},
 			events:
 			{
-				'onReady': function()
+				'onReady': function(e)
 				{
+					console.log(e);
 					//ready
 				},
-				'onStateChange': function()
+				'onStateChange': function(e)
 				{
+					console.log(e);
 					//state change
 				}
 			}
@@ -255,7 +262,13 @@ class YTPP
 
 		let container = document.createElement('div');
 		container.classList.add('ytpp-frame');
-		container.classList.add('ytpp-v16by9');
+
+		if(this.#_format == '2by1')
+			container.classList.add('ytpp-v2by1');
+		else if(this.#_format == '21by9')
+			container.classList.add('ytpp-v21by9');
+		else
+			container.classList.add('ytpp-v16by9');
 
 		if(this.#_rounded)
 			container.classList.add('ytpp-frame__rounded');
@@ -294,7 +307,7 @@ class YTPP
 				single.classList.add( 'ytpp-item__rounded' );
 
 			single.dataset.id = this.#_videos[i].id; 
-			single.onclick = function( )
+			single.onclick = function()
 			{
 				let selectedItems = document.getElementsByClassName('ytpp-item active');
 				while(selectedItems.length > 0)
