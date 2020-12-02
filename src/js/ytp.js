@@ -209,6 +209,7 @@ class YTP
 	{
 		let configuration =
 		{
+			videoId: this.#_videos[0].id,
 			playerVars:
 			{
 				'html5':          1,
@@ -219,10 +220,8 @@ class YTP
 				'autoplay':       this.#_autoplay ? 1 : 0,
 				'rel':            this.#_showRelated ? 1 : 0,
 				'controls':       this.#_showControls ? 1 : 0
-			},
-			videoId: this.#_videos[0].id
+			}
 		};
-		//https://www.youtube.com/embed/7IhGIB5XNEQ?rel=0&showinfo=0&playlist=7IhGIB5XNEQ&modestbranding=1&controls=0&loop=1&showinfo=0&autoplay=0&fs=0
 
 		if(this.#_debug)
 			YTP.#ConsoleWrite( 'IFrame configuration', '#fff', configuration );
@@ -244,7 +243,7 @@ class YTP
 
 		container.appendChild(subcontainer);
 		this.#_container.appendChild(container);
-		this.#_player =  new YT.Player( subcontainer, configuration );
+		this.#_player = new YT.Player( subcontainer, configuration );
 
 		this.#CreateCarousel();
 	}
@@ -252,6 +251,8 @@ class YTP
 	#CreateCarousel()
 	{
 		let single;
+
+		let player = this.#_player;
 		let container = document.createElement('div');
 		container.classList.add('ytp-carousel');
 
@@ -261,6 +262,26 @@ class YTP
 			single.classList.add( 'ytp-playlist-' + i );
 			single.classList.add( 'ytp-item' );
 			single.classList.add( 'ytp-item__rounded' );
+
+			single.dataset.id = this.#_videos[i].id; 
+
+			single.onclick = function( )
+			{
+				console.log(this);
+
+
+				let elements = document.getElementsByClassName('ytp-item active');
+				while(elements.length > 0)
+				{
+				    elements[0].classList.remove('active');
+				}
+
+				this.classList.add( 'active' );
+				player.loadVideoById({ videoId: this.dataset.id });
+			};
+
+			if(i == 0)
+				single.classList.add( 'active' );
 
 			let image = document.createElement('img');
 			image.src = this.#_videos[i].thumbnail;

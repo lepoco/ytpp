@@ -3,16 +3,17 @@
  * Copyright 2011-2020 The RapidDev | Leszek Pomianowski (https://rdev.cc/)
  * Licensed under MPL-2.0 (https://github.com/rapiddev/ytp/blob/main/LICENSE)
  */
-	.ytp-frame.ytp-frame__rounded {
-		border-radius: 2rem;
-	}
-
 	.ytp-frame {
 		position: relative;
 		background: transparent;
 		height: 0;
 		overflow: hidden;
 	}
+
+	.ytp-frame.ytp-frame__rounded {
+		border-radius: 2rem;
+	}
+
 
 	.ytp-frame.ytp-v16by9 {
 		padding-bottom: 56.25%;
@@ -43,6 +44,7 @@
 		transition: all ease-in-out .2s;
 	}
 
+	.ytp-item.active,
 	.ytp-item:hover {
 		opacity: 1;
 		transform: scale(1.07);
