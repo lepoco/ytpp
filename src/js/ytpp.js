@@ -9,7 +9,7 @@ class YTPP
 
 	#_apiKey       = '';
 	#_container    = '';
-	#_playlists     = [];
+	#_playlist     = '';
 
 	#_auto         = false;
 	#_debug        = false;
@@ -40,8 +40,8 @@ class YTPP
 		if(configuration.hasOwnProperty('container'))
 			this.#_container = configuration.container;
 
-		if(configuration.hasOwnProperty('playlists'))
-			this.#_playlists = configuration.playlists;
+		if(configuration.hasOwnProperty('playlist'))
+			this.#_playlist = configuration.playlist;
 
 		if(configuration.hasOwnProperty('auto'))
 			this.#_auto = configuration.auto;
@@ -84,15 +84,15 @@ class YTPP
 			if(!this.#_auto)
 			{
 				console.log( '================\n YouTube Player\n================\nhttps://rdev.cc/\nv.' + YTPP.#_version );
-				YTPP.#ConsoleWrite( 'Debug mode enabled' );
-				YTPP.#ConsoleWrite( 'Loaded configuration', '#fff', configuration );
+				YTPP.ConsoleWrite( 'Debug mode enabled' );
+				YTPP.ConsoleWrite( 'Loaded configuration', '#fff', configuration );
 			}
 
-			if(this.#_playlists != '')
-				YTPP.#ConsoleWrite( 'Playlists - ', '#fff', this.#_playlists );
+			if(this.#_playlist != '')
+				YTPP.ConsoleWrite( 'Playlist - ', '#fff', this.#_playlist );
 			
 			if(this.#_apiKey != '')
-				YTPP.#ConsoleWrite( 'API Key - ', '#fff', this.#_apiKey );
+				YTPP.ConsoleWrite( 'API Key - ', '#fff', this.#_apiKey );
 		}
 
 		this.#MobileDetector();
@@ -108,7 +108,7 @@ class YTPP
 		let players = document.getElementsByClassName('ytpp-player');
 
 		if(this.#_debug)
-			YTPP.#ConsoleWrite( 'Players detected: - ', '#fff', players.length );
+			YTPP.ConsoleWrite( 'Players detected: - ', '#fff', players.length );
 
 		for (let i = 0; i < players.length; i++)
 		{
@@ -117,7 +117,7 @@ class YTPP
 				auto: true,
 
 				container: players.item(i),
-				playlists: players.item(i).dataset.hasOwnProperty('playlist') ? [players.item(i).dataset.playlist] : this.#_playlists,
+				playlist: players.item(i).dataset.hasOwnProperty('playlist') ? players.item(i).dataset.playlist : this.#_playlist,
 				api: players.item(i).dataset.hasOwnProperty('api') ? players.item(i).dataset.api : this.#_apiKey,
 				
 				debug: players.item(i).dataset.hasOwnProperty('debug') ? YTPP.#ParseTrue(players.item(i).dataset.debug) : this.#_debug,
@@ -147,80 +147,63 @@ class YTPP
 	GetVideos()
 	{
 		let YTPP_Hook = this;
+		let isDebug = this.#_debug;
 
-		let playlistUris = [];
 		let videos = [];
-
-		let loops = 0;
 		let counter = 0;
 
-		for (let n=0; n < this.#_playlists.length; n++)
+		let xmlhttp  = new XMLHttpRequest();
+		xmlhttp.onreadystatechange = function()
 		{
-			playlistUris[n] = "https://www.googleapis.com/youtube/v3/playlistItems?playlistId=" + this.#_playlists[n] + "&key=" + this.#_apiKey + "&fields=items&part=snippet&maxResults=50";
-		}
-
-		//console.log(playlistUris);
-
-		let xmlhttp;
-		for (let i = 0; i < playlistUris.length; i++)
-		{
-			xmlhttp = new XMLHttpRequest()
-			xmlhttp.onreadystatechange = function()
+			if (xmlhttp.readyState == XMLHttpRequest.DONE)
 			{
-				if (xmlhttp.readyState == XMLHttpRequest.DONE)
+				if (xmlhttp.status == 200)
 				{
-					if (xmlhttp.status == 200)
+					if (/^[\],:{}\s]*$/.test(xmlhttp.responseText.replace(/\\["\\\/bfnrtu]/g, "@").replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, "]").replace(/(?:^|:|,)(?:\s*\[)+/g, "")))
 					{
-						if (/^[\],:{}\s]*$/.test(xmlhttp.responseText.replace(/\\["\\\/bfnrtu]/g, "@").replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, "]").replace(/(?:^|:|,)(?:\s*\[)+/g, "")))
+						///Detect if correct response
+
+						let parsedJson = JSON.parse(xmlhttp.responseText);
+
+						if(parsedJson.hasOwnProperty('items'))
 						{
-							///Detect if correct response
-
-							let parsedJson = JSON.parse(xmlhttp.responseText);
-
-							if(parsedJson.hasOwnProperty('items'))
+							for (let i = 0; i < parsedJson.items.length; i++)
 							{
-								for (let i = 0; i < parsedJson.items.length; i++)
+								videos[i] =
 								{
-									videos[i] =
-									{
-										id:          parsedJson.items[i].snippet.resourceId.videoId,
-										title:       parsedJson.items[i].snippet.title,
-										description: parsedJson.items[i].snippet.description,
-										publishedAt: parsedJson.items[i].snippet.publishedAt,
-										thumbnail:   parsedJson.items[i].snippet.thumbnails.default.url
-									};
-									counter++;
-								}
-
-								loops++;
-								if(loops == playlistUris.length)
-								{
-									YTPP_Hook.CreateIframe();
-								}
+									id:          parsedJson.items[i].snippet.resourceId.videoId,
+									title:       parsedJson.items[i].snippet.title,
+									description: parsedJson.items[i].snippet.description,
+									publishedAt: parsedJson.items[i].snippet.publishedAt,
+									thumbnail:   parsedJson.items[i].snippet.thumbnails.default.url
+								};
+								counter++;
 							}
+
+							YTPP_Hook.CreateIframe();
 						}
 					}
-					else if (xmlhttp.status == 400)
-					{
-						if(this.#_debug)
-							YTPP.#ConsoleWrite( 'There was an error 400 when quering videos' );
-					}
-					else
-					{
-						if(this.#_debug)
-							YTPP.#ConsoleWrite( 'Something else other than 200 was returned when quering videos' );
-					}
 				}
-			};
+				else if (xmlhttp.status == 400)
+				{
+					if(isDebug)
+						YTPP.ConsoleWrite( 'There was an error 400 when quering videos' );
+				}
+				else
+				{
+					if(isDebug)
+						YTPP.ConsoleWrite( 'Something else other than 200 was returned when quering videos' );
+				}
+			}
+		};
 
-			xmlhttp.open("GET", playlistUris[i], true);
-			xmlhttp.send();
-		}
+		xmlhttp.open("GET", "https://www.googleapis.com/youtube/v3/playlistItems?playlistId=" + this.#_playlist + "&key=" + this.#_apiKey + "&fields=items&part=snippet&maxResults=50", true);
+		xmlhttp.send();
 
 		this.#_videos = videos;
 
 		if(this.#_debug)
-			YTPP.#ConsoleWrite( 'Videos', '#fff', this.#_videos );
+			YTPP.ConsoleWrite( 'Videos', '#fff', this.#_videos );
 	}
 
 	CreateIframe()
@@ -256,11 +239,11 @@ class YTPP
 		if(this.#_playnext)
 		{
 			configuration.playerVars['listType'] = 'playlist';
-			configuration.playerVars['list'] = this.#_playlists[0];
+			configuration.playerVars['list'] = this.#_playlist;
 		}
 
 		if(this.#_debug)
-			YTPP.#ConsoleWrite( 'IFrame configuration', '#fff', configuration );
+			YTPP.ConsoleWrite( 'IFrame configuration', '#fff', configuration );
 
 
 		let container = document.createElement('div');
@@ -339,7 +322,7 @@ class YTPP
 		//https://developers.google.com/youtube/iframe_api_reference?hl=pl
 
 		if(this.#_debug)
-			YTPP.#ConsoleWrite('Loading YouTube API');
+			YTPP.ConsoleWrite('Loading YouTube API');
 
 		let YTPP_Hook = this;
 
@@ -363,11 +346,11 @@ class YTPP
 
 		if(this.#_debug)
 			if(this.#_isMobile && this.#_isIos)
-				YTPP.#ConsoleWrite('iOS device');
+				YTPP.ConsoleWrite('iOS device');
 			else if(this.#_isMobile)
-				YTPP.#ConsoleWrite('Mobile device');
+				YTPP.ConsoleWrite('Mobile device');
 			else
-				YTPP.#ConsoleWrite('Desktop device');
+				YTPP.ConsoleWrite('Desktop device');
 	}
 
 	static #ParseTrue( value )
@@ -375,7 +358,7 @@ class YTPP
 		return ( value == true || value == 'true' || value == 1 || value == '1' || value > 0 );
 	}
 
-	static #ConsoleWrite(message, color="#fff", data = null )
+	static ConsoleWrite(message, color="#fff", data = null )
 	{
 		if(data != null)
 			console.log( "%cYTPP: "+"%c" + message, "color:#dc3545;font-weight: bold;", "color: " + color, data );
