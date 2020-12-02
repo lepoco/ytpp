@@ -39,9 +39,9 @@ This is an early version so there is still room for improvement.
 | **format*** | The aspect ratio of movies in your playlist<br/>Available: **16by9, 21by9, 2by1**<br/>Default: **'16by9'** |
 | **container*** | The HTML element that the player will be placed in<br/>Default: **null** |
 | **rounded*** | Adds rounded edges to the player and carousel items<br/>Default: **true** |
-| **autoplay*** | Start playback automatically<br/>Default: **false** |
 | **playnext*** | Automatically play next videos<br/>Default: **true** |
-| **showcontrols*** | Show interface elements like play and next buttons<br/>Default: **true** |
+| **autoplay*** | Start playback automatically<br/>Default: **false** |
+| **showcontrols*** | Show interface elements like play and next buttons<br/>Default: **false** |
 | **showtitles*** | Show videos titles below thumbnails<br/>Default: **false** |
 | **showinfo*** | Setting this parameter to FALSE causes the Player to not show information such as the movie title or uploader name before the movie starts.<br/>Default: **false** |
 | **showrelated*** | This parameter determines whether the player should show similar movies after the video has finished playing.<br/>Default: **false** |

@@ -19,7 +19,7 @@ class YTPP
 	#_rounded      = true;
 	#_autoplay     = false;
 	#_playnext     = true;
-	#_showControls = true;
+	#_showControls = false;
 	#_showTitles   = false;
 	#_showInfo     = false;
 	#_showRelated  = false;
@@ -239,7 +239,8 @@ class YTPP
 			{
 				'onReady': function(e)
 				{
-					console.log(e);
+					console.log('CODE: ', e.data);
+					console.log("target: "+e.target.getIframe().id);
 					//ready
 				},
 				'onStateChange': function(e)
@@ -357,32 +358,5 @@ class YTPP
 		};
 
 		//iframeApi.onload = function(){}
-	}
-
-	#MobileDetector()
-	{
-		this.#_isMobile = (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/BlackBerry/i) || navigator.userAgent.match(/iPhone|iPad|iPod/i) || navigator.userAgent.match(/Opera Mini/i) || navigator.userAgent.match(/IEMobile/i));
-		this.#_isIos = navigator.userAgent.match(/iPhone|iPad|iPod/i);
-
-		if(this.#_debug)
-			if(this.#_isMobile && this.#_isIos)
-				YTPP.ConsoleWrite('iOS device');
-			else if(this.#_isMobile)
-				YTPP.ConsoleWrite('Mobile device');
-			else
-				YTPP.ConsoleWrite('Desktop device');
-	}
-
-	static #ParseTrue( value )
-	{
-		return ( value == true || value == 'true' || value == 1 || value == '1' || value > 0 );
-	}
-
-	static ConsoleWrite(message, color="#fff", data = null )
-	{
-		if(data != null)
-			console.log( "%cYTPP: "+"%c" + message, "color:#dc3545;font-weight: bold;", "color: " + color, data );
-		else
-			console.log( "%cYTPP: "+"%c" + message, "color:#dc3545;font-weight: bold;", "color: " + color );
 	}
 }
