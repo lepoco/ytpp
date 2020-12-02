@@ -30,3 +30,21 @@ This is an early version so there is still room for improvement.
   YTPP( { debug: true, api: 'your_youtube_api_v3_key' } ).Auto();
 </script>
 ```
+
+## Options available
+| Option | Description |
+| --- | --- | 
+| **api** | Your private YouTube API V3 key |
+| **playlist** | Playlist embed ID |
+| **container*** | The HTML element that the player will be placed in |
+| **rounded*** | Adds rounded edges to the player and carousel items |
+| **autoplay*** | Start playback automatically |
+| **playnext*** | Automatically play next videos |
+| **showcontrols*** | Show interface elements like play and next buttons |
+| **showtitles*** | Show videos titles below thumbnails |
+| **showinfo*** | Setting this parameter to FALSE causes the Player to not show information such as the movie title or uploader name before the movie starts. |
+| **rel*** | This parameter determines whether the player should show similar movies after the video has finished playing. |
+| **loop*** | After the entire playlist has played, the player will skip back to the first video and start over.. |
+| **debug*** | It displays a lot of information. Do not use in production. |
+
+*optional

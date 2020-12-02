@@ -14,6 +14,7 @@ class YTPP
 	#_auto         = false;
 	#_debug        = false;
 
+	#_loop         = false;
 	#_rounded      = true;
 	#_autoplay     = true;
 	#_showControls = true;
@@ -32,15 +33,6 @@ class YTPP
 		if(configuration == null)
 			return;
 
-		if(configuration.hasOwnProperty('auto'))
-			this.#_auto = configuration.auto;
-
-		if(configuration.hasOwnProperty('debug'))
-			this.#_debug = configuration.debug;
-
-		if(configuration.hasOwnProperty('rounded'))
-			this.#_rounded = configuration.rounded;
-
 		if(configuration.hasOwnProperty('api'))
 			this.#_apiKey = configuration.api;
 
@@ -49,6 +41,18 @@ class YTPP
 
 		if(configuration.hasOwnProperty('playlists'))
 			this.#_playlists = configuration.playlists;
+
+		if(configuration.hasOwnProperty('auto'))
+			this.#_auto = configuration.auto;
+
+		if(configuration.hasOwnProperty('debug'))
+			this.#_debug = configuration.debug;
+
+		if(configuration.hasOwnProperty('loop'))
+			this.#_loop = configuration.loop;
+
+		if(configuration.hasOwnProperty('rounded'))
+			this.#_rounded = configuration.rounded;
 
 		if(configuration.hasOwnProperty('autoplay'))
 			this.#_autoplay = configuration.autoplay;
@@ -112,6 +116,7 @@ class YTPP
 				
 				debug: players.item(i).dataset.hasOwnProperty('debug') ? YTPP.#ParseTrue(players.item(i).dataset.debug) : this.#_debug,
 				autoplay: players.item(i).dataset.hasOwnProperty('autoplay') ? YTPP.#ParseTrue(players.item(i).dataset.autoplay) : this.#_autoplay,
+				loop: players.item(i).dataset.hasOwnProperty('loop') ? players.item(i).dataset.loop : this.#_loop,
 				rounded: players.item(i).dataset.hasOwnProperty('rounded') ? YTPP.#ParseTrue(players.item(i).dataset.rounded) : this.#_rounded,
 				show:
 				{
@@ -221,6 +226,7 @@ class YTPP
 				'fs':             0,
 				'playsinline':    1,
 				'modestbranding': 1,
+				'loop':           this.#_loop ? 1 : 0,
 				'showinfo':       this.#_showInfo ? 1 : 0,
 				'autoplay':       this.#_autoplay ? 1 : 0,
 				'rel':            this.#_showRelated ? 1 : 0,
