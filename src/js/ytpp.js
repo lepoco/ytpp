@@ -141,10 +141,17 @@ class YTPP
 
 	Create()
 	{
-		this.#RequestApiScript();
+		if (typeof YT === 'function')
+		{
+			this.GetAndCreate();
+		}
+		else
+		{
+			this.#RequestApiScript();
+		}
 	}
 
-	GetVideos()
+	GetAndCreate()
 	{
 		let YTPP_Hook = this;
 		let isDebug = this.#_debug;
@@ -333,7 +340,7 @@ class YTPP
 
 		window.onYouTubeIframeAPIReady = function ()
 		{
-			YTPP_Hook.GetVideos();
+			YTPP_Hook.GetAndCreate();
 		};
 
 		//iframeApi.onload = function(){}
