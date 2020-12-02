@@ -239,8 +239,25 @@ class YTPP
 				'autoplay':       this.#_autoplay ? 1 : 0,
 				'rel':            this.#_showRelated ? 1 : 0,
 				'controls':       this.#_showControls ? 1 : 0
+			},
+			events:
+			{
+				'onReady': function()
+				{
+					//ready
+				},
+				'onStateChange': function()
+				{
+					//state change
+				}
 			}
 		};
+
+		if(this.#_playnext)
+		{
+			configuration.playerVars['listType'] = 'playlist';
+			configuration.playerVars['list'] = this.#_playlists[0];
+		}
 
 		if(this.#_debug)
 			YTPP.#ConsoleWrite( 'IFrame configuration', '#fff', configuration );
@@ -291,7 +308,7 @@ class YTPP
 			{
 				let selectedItems = document.getElementsByClassName('ytpp-item active');
 				while(selectedItems.length > 0)
-				    selectedItems[0].classList.remove('active');
+					selectedItems[0].classList.remove('active');
 
 				this.classList.add( 'active' );
 				player.loadVideoById({ videoId: this.dataset.id });
