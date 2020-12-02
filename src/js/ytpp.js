@@ -17,6 +17,7 @@ class YTPP
 	#_loop         = false;
 	#_rounded      = true;
 	#_autoplay     = true;
+	#_playnext     = true;
 	#_showControls = true;
 	#_showTitles   = true;
 	#_showInfo     = true;
@@ -56,6 +57,9 @@ class YTPP
 
 		if(configuration.hasOwnProperty('autoplay'))
 			this.#_autoplay = configuration.autoplay;
+
+		if(configuration.hasOwnProperty('playnext'))
+			this.#_playnext = configuration.playnext;
 
 		if(configuration.hasOwnProperty('show'))
 		{
@@ -108,16 +112,20 @@ class YTPP
 
 		for (let i = 0; i < players.length; i++)
 		{
-			configuration = {
+			configuration =
+			{
 				auto: true,
+
 				container: players.item(i),
 				playlists: players.item(i).dataset.hasOwnProperty('playlist') ? [players.item(i).dataset.playlist] : this.#_playlists,
 				api: players.item(i).dataset.hasOwnProperty('api') ? players.item(i).dataset.api : this.#_apiKey,
 				
 				debug: players.item(i).dataset.hasOwnProperty('debug') ? YTPP.#ParseTrue(players.item(i).dataset.debug) : this.#_debug,
 				autoplay: players.item(i).dataset.hasOwnProperty('autoplay') ? YTPP.#ParseTrue(players.item(i).dataset.autoplay) : this.#_autoplay,
+				playnext: players.item(i).dataset.hasOwnProperty('playnext') ? YTPP.#ParseTrue(players.item(i).dataset.playnext) : this.#_playnext,
 				loop: players.item(i).dataset.hasOwnProperty('loop') ? players.item(i).dataset.loop : this.#_loop,
 				rounded: players.item(i).dataset.hasOwnProperty('rounded') ? YTPP.#ParseTrue(players.item(i).dataset.rounded) : this.#_rounded,
+
 				show:
 				{
 					controls: players.item(i).dataset.hasOwnProperty('showcontrols') ? YTPP.#ParseTrue(players.item(i).dataset.showcontrols) : this.#_showControls,
