@@ -1,5 +1,8 @@
+![Logo](https://github.com/rapiddev/ytpp/blob/main/.github/screenshot-1.jpg?raw=true)
 # YouTube Playlist Player
-YouTube Playlist Player
+[Created with ![heart](http://i.imgur.com/oXJmdtz.gif) in Poland by RapidDev](https://rdev.cc/)<br />
+A simple way to display playlists nicely on your website. Reponsively, using YT API V3.  
+This is an early version so there is still room for improvement.
 
 ## Usage
 **Add a reference to the script and style**
