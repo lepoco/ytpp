@@ -14,6 +14,7 @@ class YTPP
 	#_auto         = false;
 	#_debug        = false;
 
+	#_rounded      = true;
 	#_autoplay     = true;
 	#_showControls = true;
 	#_showTitles   = true;
@@ -36,6 +37,9 @@ class YTPP
 
 		if(configuration.hasOwnProperty('debug'))
 			this.#_debug = configuration.debug;
+
+		if(configuration.hasOwnProperty('rounded'))
+			this.#_rounded = configuration.rounded;
 
 		if(configuration.hasOwnProperty('api'))
 			this.#_apiKey = configuration.api;
@@ -108,6 +112,7 @@ class YTPP
 				
 				debug: players.item(i).dataset.hasOwnProperty('debug') ? YTPP.#ParseTrue(players.item(i).dataset.debug) : this.#_debug,
 				autoplay: players.item(i).dataset.hasOwnProperty('autoplay') ? YTPP.#ParseTrue(players.item(i).dataset.autoplay) : this.#_autoplay,
+				rounded: players.item(i).dataset.hasOwnProperty('rounded') ? YTPP.#ParseTrue(players.item(i).dataset.rounded) : this.#_rounded,
 				show:
 				{
 					controls: players.item(i).dataset.hasOwnProperty('showcontrols') ? YTPP.#ParseTrue(players.item(i).dataset.showcontrols) : this.#_showControls,
@@ -229,8 +234,10 @@ class YTPP
 
 		let container = document.createElement('div');
 		container.classList.add('ytpp-frame');
-		container.classList.add('ytpp-frame__rounded');
 		container.classList.add('ytpp-v16by9');
+
+		if(this.#_rounded)
+			container.classList.add('ytpp-frame__rounded');
 
 		let subcontainer = document.createElement('div');
 		subcontainer.classList.add('embed-responsive-item');
@@ -261,7 +268,9 @@ class YTPP
 			single = document.createElement('div');
 			single.classList.add( 'ytpp-playlist-' + i );
 			single.classList.add( 'ytpp-item' );
-			single.classList.add( 'ytpp-item__rounded' );
+			
+			if(this.#_rounded)
+				single.classList.add( 'ytpp-item__rounded' );
 
 			single.dataset.id = this.#_videos[i].id; 
 			single.onclick = function( )

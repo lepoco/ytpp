@@ -4,8 +4,8 @@ YouTube Playlist Player
 ## Usage
 **Add a reference to the script and style**
 ```html
-<link href="https://example.com/ytp/css/ytpp.min.css" rel="stylesheet" />
-<script src="https://example.com/ytp/js/ytpp.min.js" crossorigin="anonymous"></script>
+<link href="https://example.com/ytpp/css/ytpp.min.css" rel="stylesheet" />
+<script src="https://example.com/ytpp/js/ytpp.min.js" crossorigin="anonymous"></script>
 ```
 
 **Place the player wherever you like*
