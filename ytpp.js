@@ -1,5 +1,5 @@
 /*!
- * YTPP v1.0.2 (https://github.com/rapiddev/ytpp)
+ * YTPP v1.0.3 (https://github.com/rapiddev/ytpp)
  * Copyright 2011-2020 The RapidDev | Leszek Pomianowski (https://rdev.cc/)
  * Licensed under MPL-2.0 (https://github.com/rapiddev/ytpp/blob/main/LICENSE)
  */
@@ -9,7 +9,8 @@ class YTPP {
         if (configuration == null)
             return;
 
-        this._version = '1.0.2';
+        this._version = '1.0.3';
+        this._ytframe = 'https://www.youtube.com/iframe_api/';
         this._yturl = 'https://www.googleapis.com/youtube/v3/';
 
         if (configuration.hasOwnProperty('container'))
@@ -176,7 +177,7 @@ class YTPP {
         let YTPP_Hook = this;
 
         let tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
+        tag.src = this._ytframe;
         let firstScriptTag = document.getElementsByTagName('script')[0];
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
@@ -217,8 +218,6 @@ class YTPP {
                 },
                 videos: []
             };
-
-            console.log(containerConfig);
 
             this.GetVideos(containerConfig);
         }
@@ -313,10 +312,11 @@ class YTPP {
             },
             events: {
                 'onReady': function(e) {
-                    console.log(e);
+                    if (playerData.autoplay)
+                        e.target.playVideo();
                 },
                 'onStateChange': function(e) {
-                    console.log(e);
+
                 }
             }
         });
@@ -397,7 +397,8 @@ class YTPP {
                 carouselTrack.style.transform = 'translateX(' + 0 + 'px)';
                 scrollRatio = 0;
             }
-        });
+
+        }, { passive: false });
 
         carouselTrack.style.width = 'calc(' + playerData.itemswidth + 'px * ' + playerData.videos.length + ')';
     }
