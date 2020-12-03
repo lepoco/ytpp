@@ -8,8 +8,8 @@ This is an early version so there is still room for improvement.
 ## Usage
 **Add a reference to the script and style**
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rapiddev/ytpp@1.0.0/src/css/ytpp.css" integrity="sha256-hMW50Vg738LsinpIrYMParfnb67/dLwMFAXyJtE/RSs=" crossorigin="anonymous">
-<script src="https://cdn.jsdelivr.net/gh/rapiddev/ytpp@1.0.0/src/js/ytpp.js" integrity="sha256-sz9cQUoYLqwwM6g55M2vgTnAxtl3efCZOEysQuq8+Bw=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rapiddev/ytpp@1.0.1/src/css/ytpp.css">
+<script src="https://cdn.jsdelivr.net/gh/rapiddev/ytpp@1.0.1/src/js/ytpp.js"></script>
 ```
 
 **Place the player wherever you like**
