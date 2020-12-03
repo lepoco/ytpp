@@ -337,7 +337,7 @@ class YTPP
 				'playsinline':    1,
 				'modestbranding': 1,
 				'list':           playerData.playlist,
-				'listType':       playerData.playNext ? 'playlist' : 'none',
+				//'listType':       playerData.playNext ? 'playlist' : 'none',
 				'loop':           playerData.loop ? 1 : 0,
 				'showinfo':       playerData.showInfo ? 1 : 0,
 				'autoplay':       playerData.autoplay ? 1 : 0,
@@ -418,6 +418,36 @@ class YTPP
 		carouselTrack.appendChild(carouselStrip);
 		carouselContainer.appendChild(carouselTrack);
 		playerData.container.appendChild(carouselContainer);
+
+		let scrollRatio = 0;
+		carouselContainer.addEventListener('wheel', function(event)
+		{
+			event.preventDefault();
+
+			console.log(scrollRatio);
+
+			let maxNegative =  - ((playerData.videos.length * 110 ) - playerData.container.clientWidth);
+
+			let y = parseInt(event.deltaY);
+			scrollRatio -= y;
+
+			console.log(maxNegative);
+
+			if(scrollRatio < maxNegative)
+			{
+				carouselTrack.style.transform = 'translateX(' + maxNegative + 'px)';
+				scrollRatio = maxNegative;
+			}
+			else if(scrollRatio <= 0)
+			{
+				carouselTrack.style.transform = 'translateX(' + scrollRatio + 'px)';
+			}
+			else
+			{
+				carouselTrack.style.transform = 'translateX(' + 0 + 'px)';
+				scrollRatio = 0;
+			}
+		});
 
 		carouselTrack.style.width = 'calc(110px * ' + playerData.videos.length + ')';
 
