@@ -30,7 +30,7 @@
 	.ytpp-carousel {
 		position: relative;
 		width: 100%;
-		min-height: 110px;
+		min-height: 70px;
 		margin-top: 1rem;
 		overflow-x: hidden;
 		overflow-y: hidden;
@@ -49,6 +49,7 @@
 
 	.ytpp-carousel-strip {
 		display: flex;
+		height: 100%;
 	}
 
 	.ytpp-carousel .ytpp-item:not(:first-child):not(:last-child) {
@@ -58,6 +59,7 @@
 
 	.ytpp-item {
 		width: 110px;
+		height: 100%;
 		opacity: 0.5;
 		cursor: pointer;
 		transition: all ease-in-out .2s;
