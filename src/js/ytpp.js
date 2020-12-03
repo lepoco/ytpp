@@ -6,9 +6,11 @@
 class YTPP
 {
 	static #_version = '1.0.0';
+	static #_yturl   = 'https://www.googleapis.com/youtube/v3/';
+
+	#_containers;
 
 	#_apiKey       = '';
-	#_container    = '';
 	#_playlist     = '';
 
 	#_auto         = false;
@@ -24,22 +26,19 @@ class YTPP
 	#_showInfo     = false;
 	#_showRelated  = false;
 
-	#_isMobile     = false;
-	#_isIos        = false;
-
 	#_videos       = [];
-	#_player;
+	#_players      = [];
 
 	constructor(configuration = null)
 	{
 		if(configuration == null)
 			return;
 
+		if(configuration.hasOwnProperty('container'))
+			this.#_containers = configuration.container;
+
 		if(configuration.hasOwnProperty('api'))
 			this.#_apiKey = configuration.api;
-
-		if(configuration.hasOwnProperty('container'))
-			this.#_container = configuration.container;
 
 		if(configuration.hasOwnProperty('playlist'))
 			this.#_playlist = configuration.playlist;
@@ -93,77 +92,167 @@ class YTPP
 			}
 
 			if(this.#_playlist != '')
-				YTPP.ConsoleWrite( 'Playlist - ', '#fff', this.#_playlist );
+				YTPP.ConsoleWrite( 'Playlist:', '#fff', this.#_playlist );
 			
 			if(this.#_apiKey != '')
-				YTPP.ConsoleWrite( 'API Key - ', '#fff', this.#_apiKey );
+				YTPP.ConsoleWrite( 'API Key:', '#fff', this.#_apiKey );
 		}
-
-		this.#MobileDetector();
-		
 	}
 
-	Auto()
+	Show()
 	{
-		if (document.getElementsByClassName('ytpp-player').length == 0)
-			return;
+		let parsed;
+		let single = false;
 
-		let configuration;
-		let players = document.getElementsByClassName('ytpp-player');
-
-		if(this.#_debug)
-			YTPP.ConsoleWrite( 'Players detected: - ', '#fff', players.length );
-
-		for (let i = 0; i < players.length; i++)
+		if( this.#_containers == '' || this.#_containers == undefined )
 		{
-			configuration =
+			parsed = document.getElementsByClassName('ytpp-player');
+
+			if(parsed == undefined)
 			{
-				auto: true,
+				if(this.#_debug)
+					YTPP.ConsoleWrite('Elements with class .ytpp-player do not exist!', 'red');
 
-				container: players.item(i),
-				playlist: players.item(i).dataset.hasOwnProperty('playlist') ? players.item(i).dataset.playlist : this.#_playlist,
-				api: players.item(i).dataset.hasOwnProperty('api') ? players.item(i).dataset.api : this.#_apiKey,
-				
-				debug: players.item(i).dataset.hasOwnProperty('debug') ? YTPP.#ParseTrue(players.item(i).dataset.debug) : this.#_debug,
-				autoplay: players.item(i).dataset.hasOwnProperty('autoplay') ? YTPP.#ParseTrue(players.item(i).dataset.autoplay) : this.#_autoplay,
-				playnext: players.item(i).dataset.hasOwnProperty('playnext') ? YTPP.#ParseTrue(players.item(i).dataset.playnext) : this.#_playnext,
-				format: players.item(i).dataset.hasOwnProperty('format') ? players.item(i).dataset.format : this.#_format,
-				loop: players.item(i).dataset.hasOwnProperty('loop') ? players.item(i).dataset.loop : this.#_loop,
-				rounded: players.item(i).dataset.hasOwnProperty('rounded') ? YTPP.#ParseTrue(players.item(i).dataset.rounded) : this.#_rounded,
-
-				show:
-				{
-					controls: players.item(i).dataset.hasOwnProperty('showcontrols') ? YTPP.#ParseTrue(players.item(i).dataset.showcontrols) : this.#_showControls,
-					titles: players.item(i).dataset.hasOwnProperty('showtitles') ? YTPP.#ParseTrue(players.item(i).dataset.showtitles) : this.#_showTitles,
-					info: players.item(i).dataset.hasOwnProperty('showinfo') ? YTPP.#ParseTrue(players.item(i).dataset.showinfo) : this.#_showInfo,
-					related: players.item(i).dataset.hasOwnProperty('showrelated') ? YTPP.#ParseTrue(players.item(i).dataset.showrelated) : this.#_showRelated
-				}
-			};
-
-			( new YTPP(configuration).Create() );
+				return;
+			}
 		}
-	}
-
-	Create()
-	{
-		if (typeof YT === 'function')
+		else if(typeof this.#_containers === 'string' || this.#_containers instanceof String)
 		{
-			this.GetAndCreate();
+			if(this.#_containers.startsWith('.'))
+			{
+				parsed = document.getElementsByClassName( this.#_containers.substring(1) );
+
+				if(parsed == undefined)
+				{
+					if(this.#_debug)
+						YTPP.ConsoleWrite('Elements with class ' + this.#_containers + ' do not exist!', 'red');
+
+					return;
+				}
+			}
+			else if(this.#_containers.startsWith('#'))
+			{
+				parsed = document.getElementById( this.#_containers.substring(1) );
+				single = true;
+
+				if(parsed == undefined)
+				{
+					if(this.#_debug)
+						YTPP.ConsoleWrite('Element with identifier ' + this.#_containers + ' does not exist!', 'red');
+
+					return;
+				}
+			}
+			else
+			{
+				if(this.#_debug)
+					YTPP.ConsoleWrite('An error occurred while finding the element/s. Only classes and IDs are available.', 'red');
+
+				return;
+			}
+		}	
+		else
+		{
+			if(this.#_containers instanceof HTMLCollection)
+			{
+				parsed = this.#_containers;
+			}
+			else if(this.#_containers instanceof HTMLElement)
+			{
+				parsed = this.#_containers;
+				single = true;
+			}
+			else
+			{
+				if(this.#_debug)
+					YTPP.ConsoleWrite('An error occurred while finding the element/s. Only HTMLCollection\'s and HTMLElement\'s are available.', 'red');
+
+				return;
+			}
+		}
+
+		if(single)
+		{
+			this.#_containers = [ parsed ];
 		}
 		else
 		{
-			this.#RequestApiScript();
+			this.#_containers = [];
+			for (let i = 0; i < parsed.length; i++)
+				this.#_containers[i] = parsed[i];
+		}
+
+		this.LoadElements();
+	}
+
+	LoadElements()
+	{
+		if(this.#_debug)
+			YTPP.ConsoleWrite('Loading YouTube iFrame API');
+
+		let YTPP_Hook = this;
+
+		let tag = document.createElement('script');
+		tag.src = "https://www.youtube.com/iframe_api";
+		let firstScriptTag = document.getElementsByTagName('script')[0];
+		firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+		window.onYouTubeIframeAPIReady = function ()
+		{
+			if(YTPP_Hook.IsDebug())
+				YTPP.ConsoleWrite('YouTube iFrame API loaded!');
+
+			YTPP_Hook.BuildPlayers( );
+		};
+	}
+
+	BuildPlayers( )
+	{
+		if(this.#_debug)
+			YTPP.ConsoleWrite( 'Players detected:', '#fff', this.#_containers.length );
+
+		let containerConfig = {};
+
+		for (let i = 0; i < this.#_containers.length; i++)
+		{
+			containerConfig =
+			{
+				id: i,
+				container: this.#_containers[i],
+				api: this.#_containers[i].dataset.hasOwnProperty('api') ? this.#_containers[i].dataset.api : this.#_apiKey,
+				playlist: this.#_containers[i].dataset.hasOwnProperty('playlist') ? this.#_containers[i].dataset.playlist : this.#_playlist,
+				autoplay: this.#_containers[i].dataset.hasOwnProperty('autoplay') ? YTPP.#ParseTrue(this.#_containers[i].dataset.autoplay) : this.#_autoplay,
+				playnext: this.#_containers[i].dataset.hasOwnProperty('playnext') ? YTPP.#ParseTrue(this.#_containers[i].dataset.playnext) : this.#_playnext,
+				format: this.#_containers[i].dataset.hasOwnProperty('format') ? this.#_containers[i].dataset.format : this.#_format,
+				loop: this.#_containers[i].dataset.hasOwnProperty('loop') ? this.#_containers[i].dataset.loop : this.#_loop,
+				rounded: this.#_containers[i].dataset.hasOwnProperty('rounded') ? YTPP.#ParseTrue(this.#_containers[i].dataset.rounded) : this.#_rounded,
+				show:
+				{
+					controls: this.#_containers[i].dataset.hasOwnProperty('showcontrols') ? YTPP.#ParseTrue(this.#_containers[i].dataset.showcontrols) : this.#_showControls,
+					titles: this.#_containers[i].dataset.hasOwnProperty('showtitles') ? YTPP.#ParseTrue(this.#_containers[i].dataset.showtitles) : this.#_showTitles,
+					info: this.#_containers[i].dataset.hasOwnProperty('showinfo') ? YTPP.#ParseTrue(this.#_containers[i].dataset.showinfo) : this.#_showInfo,
+					related: this.#_containers[i].dataset.hasOwnProperty('showrelated') ? YTPP.#ParseTrue(this.#_containers[i].dataset.showrelated) : this.#_showRelated
+				},
+				videos: []
+			};
+
+			console.log( containerConfig );
+
+			this.GetVideos( containerConfig );
 		}
 	}
 
-	GetAndCreate()
+	GetVideos( config )
 	{
-		let YTPP_Hook = this;
+		if(config.playlist == '' || config.playlist == undefined)
+		{
+			if(this.#_debug)
+				YTPP.ConsoleWrite( 'Playlist was not provided for container #' + config.id, 'red' );
+
+			return;
+		}
+
 		let isDebug = this.#_debug;
-
-		let videos = [];
-		let counter = 0;
-
 		let xmlhttp  = new XMLHttpRequest();
 		xmlhttp.onreadystatechange = function()
 		{
@@ -181,7 +270,7 @@ class YTPP
 						{
 							for (let i = 0; i < parsedJson.items.length; i++)
 							{
-								videos[i] =
+								config.videos[i] =
 								{
 									id:          parsedJson.items[i].snippet.resourceId.videoId,
 									title:       parsedJson.items[i].snippet.title,
@@ -189,89 +278,42 @@ class YTPP
 									publishedAt: parsedJson.items[i].snippet.publishedAt,
 									thumbnail:   parsedJson.items[i].snippet.thumbnails.default.url
 								};
-								counter++;
 							}
 
-							YTPP_Hook.CreateIframe();
+							YTPP.CreateIframe( config );
 						}
 					}
 				}
 				else if (xmlhttp.status == 400)
 				{
-					if(isDebug)
+					if( isDebug )
 						YTPP.ConsoleWrite( 'There was an error 400 when quering videos' );
 				}
 				else
 				{
-					if(isDebug)
+					if( isDebug )
 						YTPP.ConsoleWrite( 'Something else other than 200 was returned when quering videos' );
 				}
 			}
 		};
 
-		xmlhttp.open("GET", "https://www.googleapis.com/youtube/v3/playlistItems?playlistId=" + this.#_playlist + "&key=" + this.#_apiKey + "&fields=items&part=snippet&maxResults=50", true);
+		xmlhttp.open('GET', YTPP.#_yturl + 'playlistItems?playlistId=' + config.playlist + '&key=' + config.api + '&fields=items&part=snippet&maxResults=50', true);
 		xmlhttp.send();
-
-		this.#_videos = videos;
-
-		if(this.#_debug)
-			YTPP.ConsoleWrite( 'Videos', '#fff', this.#_videos );
 	}
 
-	CreateIframe()
+	static CreateIframe( playerData )
 	{
-		let configuration =
-		{
-			videoId: this.#_videos[0].id,
-			playerVars:
-			{
-				'html5':          1,
-				'fs':             0,
-				'playsinline':    1,
-				'modestbranding': 1,
-				'loop':           this.#_loop ? 1 : 0,
-				'showinfo':       this.#_showInfo ? 1 : 0,
-				'autoplay':       this.#_autoplay ? 1 : 0,
-				'rel':            this.#_showRelated ? 1 : 0,
-				'controls':       this.#_showControls ? 1 : 0
-			},
-			events:
-			{
-				'onReady': function(e)
-				{
-					console.log('CODE: ', e.data);
-					console.log("target: "+e.target.getIframe().id);
-					//ready
-				},
-				'onStateChange': function(e)
-				{
-					console.log(e);
-					//state change
-				}
-			}
-		};
-
-		if(this.#_playnext)
-		{
-			configuration.playerVars['listType'] = 'playlist';
-			configuration.playerVars['list'] = this.#_playlist;
-		}
-
-		if(this.#_debug)
-			YTPP.ConsoleWrite( 'IFrame configuration', '#fff', configuration );
-
-
 		let container = document.createElement('div');
 		container.classList.add('ytpp-frame');
 
-		if(this.#_format == '2by1')
+		if(playerData.format == '2by1')
 			container.classList.add('ytpp-v2by1');
-		else if(this.#_format == '21by9')
+		else if(playerData.format == '21by9')
 			container.classList.add('ytpp-v21by9');
 		else
 			container.classList.add('ytpp-v16by9');
 
-		if(this.#_rounded)
+		if(playerData.rounded)
 			container.classList.add('ytpp-frame__rounded');
 
 		let subcontainer = document.createElement('div');
@@ -284,31 +326,61 @@ class YTPP
 		subcontainer.style.border = "none";
 
 		container.appendChild(subcontainer);
-		this.#_container.appendChild(container);
-		this.#_player = new YT.Player( subcontainer, configuration );
+		playerData.container.appendChild(container);
 
-		this.#CreateCarousel();
+		playerData.player = new YT.Player( subcontainer, {
+			videoId: playerData.videos[0].id,
+			playerVars:
+			{
+				'html5':          1,
+				'fs':             0,
+				'playsinline':    1,
+				'modestbranding': 1,
+				'loop':           playerData.loop ? 1 : 0,
+				'showinfo':       playerData.showInfo ? 1 : 0,
+				'autoplay':       playerData.autoplay ? 1 : 0,
+				'rel':            playerData.showRelated ? 1 : 0,
+				'controls':       playerData.showControls ? 1 : 0
+			},
+			events:
+			{
+				'onReady': function(e)
+				{
+					console.log(e);
+					//console.log('CODE: ', e.data);
+					//console.log("target: "+e.target.getIframe().id);
+					//ready
+				},
+				'onStateChange': function(e)
+				{
+					console.log(e);
+					//state change
+				}
+			}
+		});
+
+		YTPP.CreateCarousel( playerData );
 	}
 
-	#CreateCarousel()
+	static CreateCarousel( playerData )
 	{
-		let single;
 
-		let player = this.#_player;
-		let container = document.createElement('div');
-		container.classList.add('ytpp-carousel');
+		let player = playerData.player;
+		let carouselContainer = document.createElement('div');
+		carouselContainer.classList.add('ytpp-carousel');
 
-		for (let i = 0; i < this.#_videos.length; i++)
+		let carouselItem;
+		for (let i = 0; i < playerData.videos.length; i++)
 		{
-			single = document.createElement('div');
-			single.classList.add( 'ytpp-playlist-' + i );
-			single.classList.add( 'ytpp-item' );
+			carouselItem = document.createElement('div');
+			carouselItem.classList.add( 'ytpp-playlist-' + i );
+			carouselItem.classList.add( 'ytpp-item' );
 			
-			if(this.#_rounded)
-				single.classList.add( 'ytpp-item__rounded' );
+			if( playerData.rounded )
+				carouselItem.classList.add( 'ytpp-item__rounded' );
 
-			single.dataset.id = this.#_videos[i].id; 
-			single.onclick = function()
+			carouselItem.dataset.id = playerData.videos[i].id; 
+			carouselItem.onclick = function()
 			{
 				let selectedItems = document.getElementsByClassName('ytpp-item active');
 				while(selectedItems.length > 0)
@@ -319,44 +391,39 @@ class YTPP
 			};
 
 			if(i == 0)
-				single.classList.add( 'active' );
+				carouselItem.classList.add( 'active' );
 
 			let image = document.createElement('img');
-			image.src = this.#_videos[i].thumbnail;
-			single.appendChild(image);
+			image.src = playerData.videos[i].thumbnail;
+			carouselItem.appendChild(image);
 
-			if(this.#_showTitles)
+			if(playerData.show.title)
 			{
 				let title = document.createElement('p');
-				title.innerHTML = this.#_videos[i].title;
-				single.appendChild(title);
+				title.innerHTML = playerData.videos[i].title;
+				carouselItem.appendChild(title);
 			}
 
-			container.appendChild(single);
+			carouselContainer.appendChild(carouselItem);
 		}
-		this.#_container.appendChild(container);
-
+		playerData.container.appendChild(carouselContainer);
 	}
 
-	#RequestApiScript()
+	IsDebug()
 	{
-		//https://developers.google.com/youtube/iframe_api_reference?hl=pl
+		return this.#_debug;
+	}
 
-		if(this.#_debug)
-			YTPP.ConsoleWrite('Loading YouTube API');
+	static #ParseTrue( value )
+	{
+		return ( value == true || value == 'true' || value == 1 || value == '1' || value > 0 );
+	}
 
-		let YTPP_Hook = this;
-
-		let tag = document.createElement('script');
-		tag.src = "https://www.youtube.com/iframe_api";
-		let firstScriptTag = document.getElementsByTagName('script')[0];
-		firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-		window.onYouTubeIframeAPIReady = function ()
-		{
-			YTPP_Hook.GetAndCreate();
-		};
-
-		//iframeApi.onload = function(){}
+	static ConsoleWrite(message, color="#fff", data = null )
+	{
+		if(data != null)
+			console.log( "%cYTPP: "+"%c" + message, "color:#dc3545;font-weight: bold;", "color: " + color, data );
+		else
+			console.log( "%cYTPP: "+"%c" + message, "color:#dc3545;font-weight: bold;", "color: " + color );
 	}
 }

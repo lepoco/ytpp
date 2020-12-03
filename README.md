@@ -1,5 +1,6 @@
 ![Logo](https://github.com/rapiddev/ytpp/blob/main/.github/screenshot-1.jpg?raw=true)
 # YouTube Playlist Player
+[![](https://data.jsdelivr.com/v1/package/gh/rapiddev/ytpp/badge)](https://www.jsdelivr.com/package/gh/rapiddev/ytpp)  
 [Created with ![heart](http://i.imgur.com/oXJmdtz.gif) in Poland by RapidDev](https://rdev.cc/)<br />
 A simple way to display playlists nicely on your website. Reponsively, using YT API V3.  
 This is an early version so there is still room for improvement.
@@ -7,8 +8,8 @@ This is an early version so there is still room for improvement.
 ## Usage
 **Add a reference to the script and style**
 ```html
-<link href="https://example.com/ytpp/css/ytpp.min.css" rel="stylesheet" />
-<script src="https://example.com/ytpp/js/ytpp.min.js" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rapiddev/ytpp@1.0.0/src/css/ytpp.css" integrity="sha256-hMW50Vg738LsinpIrYMParfnb67/dLwMFAXyJtE/RSs=" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/gh/rapiddev/ytpp@1.0.0/src/js/ytpp.js" integrity="sha256-sz9cQUoYLqwwM6g55M2vgTnAxtl3efCZOEysQuq8+Bw=" crossorigin="anonymous"></script>
 ```
 
 **Place the player wherever you like**
