@@ -8,8 +8,8 @@ This is an early version so there is still room for improvement.
 ## Usage
 **Add a reference to the script and style**
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rapiddev/ytpp@1.0.1/src/css/ytpp.css">
-<script src="https://cdn.jsdelivr.net/gh/rapiddev/ytpp@1.0.1/src/js/ytpp.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rapiddev/ytpp@1.0.2/ytpp.min.css">
+<script src="https://cdn.jsdelivr.net/gh/rapiddev/ytpp@1.0.2/ytpp.min.js"></script>
 ```
 
 **Place the player wherever you like**
