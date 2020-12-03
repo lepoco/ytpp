@@ -424,15 +424,10 @@ class YTPP
 		{
 			event.preventDefault();
 
-			console.log(scrollRatio);
-
 			let maxNegative =  - ((playerData.videos.length * 110 ) - playerData.container.clientWidth);
-
 			let y = parseInt(event.deltaY);
+			
 			scrollRatio -= y;
-
-			console.log(maxNegative);
-
 			if(scrollRatio < maxNegative)
 			{
 				carouselTrack.style.transform = 'translateX(' + maxNegative + 'px)';
