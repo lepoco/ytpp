@@ -13,7 +13,6 @@ class YTPP
 	#_apiKey       = '';
 	#_playlist     = '';
 
-	#_auto         = false;
 	#_debug        = false;
 
 	#_format       = '16by9';
@@ -26,8 +25,11 @@ class YTPP
 	#_showInfo     = false;
 	#_showRelated  = false;
 
-	#_videos       = [];
-	#_players      = [];
+	#_itemsWidth     = 110;
+	#_itemsHeight = 70;
+
+	#_videos         = [];
+	#_players        = [];
 
 	constructor(configuration = null)
 	{
@@ -42,9 +44,6 @@ class YTPP
 
 		if(configuration.hasOwnProperty('playlist'))
 			this.#_playlist = configuration.playlist;
-
-		if(configuration.hasOwnProperty('auto'))
-			this.#_auto = configuration.auto;
 
 		if(configuration.hasOwnProperty('debug'))
 			this.#_debug = configuration.debug;
@@ -63,6 +62,12 @@ class YTPP
 
 		if(configuration.hasOwnProperty('playnext'))
 			this.#_playnext = configuration.playnext;
+
+		if(configuration.hasOwnProperty('itemsWidth'))
+			this.#_itemsWidth = configuration.itemsWidth;
+
+		if(configuration.hasOwnProperty('itemsHeight'))
+			this.#_itemsHeight = configuration.itemsHeight;
 
 		if(configuration.hasOwnProperty('show'))
 		{
@@ -84,12 +89,9 @@ class YTPP
 
 		if(this.#_debug)
 		{
-			if(!this.#_auto)
-			{
-				console.log( '================\n YouTube Player\n================\nhttps://rdev.cc/\nv.' + YTPP.#_version );
-				YTPP.ConsoleWrite( 'Debug mode enabled' );
-				YTPP.ConsoleWrite( 'Loaded configuration', '#fff', configuration );
-			}
+			console.log( '================\n YouTube Player\n================\nhttps://rdev.cc/\nv.' + YTPP.#_version );
+			YTPP.ConsoleWrite( 'Debug mode enabled' );
+			YTPP.ConsoleWrite( 'Loaded configuration', '#fff', configuration );
 
 			if(this.#_playlist != '')
 				YTPP.ConsoleWrite( 'Playlist:', '#fff', this.#_playlist );
@@ -226,6 +228,10 @@ class YTPP
 				format: this.#_containers[i].dataset.hasOwnProperty('format') ? this.#_containers[i].dataset.format : this.#_format,
 				loop: this.#_containers[i].dataset.hasOwnProperty('loop') ? this.#_containers[i].dataset.loop : this.#_loop,
 				rounded: this.#_containers[i].dataset.hasOwnProperty('rounded') ? YTPP.#ParseTrue(this.#_containers[i].dataset.rounded) : this.#_rounded,
+
+				itemswidth: this.#_containers[i].dataset.hasOwnProperty('itemswidth') ? this.#_containers[i].dataset.itemswidth : this.#_itemsWidth,
+				itemsheight: this.#_containers[i].dataset.hasOwnProperty('itemsheight') ? this.#_containers[i].dataset.itemsheight : this.#_itemsHeight,
+
 				show:
 				{
 					controls: this.#_containers[i].dataset.hasOwnProperty('showcontrols') ? YTPP.#ParseTrue(this.#_containers[i].dataset.showcontrols) : this.#_showControls,
@@ -370,6 +376,7 @@ class YTPP
 		let player = playerData.player;
 		let carouselContainer = document.createElement('div');
 		carouselContainer.classList.add('ytpp-carousel');
+		carouselContainer.style.height = playerData.itemsheight + 'px';
 
 		let carouselTrack = document.createElement('div');
 		carouselTrack.classList.add('ytpp-carousel-track');
@@ -383,6 +390,7 @@ class YTPP
 			carouselItem = document.createElement('div');
 			carouselItem.classList.add( 'ytpp-playlist-' + i );
 			carouselItem.classList.add( 'ytpp-item' );
+			carouselItem.style.width = playerData.itemswidth + 'px';
 			
 			if( playerData.rounded )
 				carouselItem.classList.add( 'ytpp-item__rounded' );
@@ -422,9 +430,12 @@ class YTPP
 		let scrollRatio = 0;
 		carouselContainer.addEventListener('wheel', function(event)
 		{
+			if(carouselStrip.clientWidth < carouselContainer.clientWidth)
+				return;
+
 			event.preventDefault();
 
-			let maxNegative =  - ((playerData.videos.length * 110 ) - playerData.container.clientWidth);
+			let maxNegative =  - ((playerData.videos.length * playerData.itemswidth ) - playerData.container.clientWidth);
 			let y = parseInt(event.deltaY);
 			
 			scrollRatio -= y;
@@ -444,7 +455,7 @@ class YTPP
 			}
 		});
 
-		carouselTrack.style.width = 'calc(110px * ' + playerData.videos.length + ')';
+		carouselTrack.style.width = 'calc(' + playerData.itemswidth + 'px * ' + playerData.videos.length + ')';
 
 		//console.log(carouselTrack.clientHeight + "px");
 		//carouselContainer.style.minHeight = carouselTrack.clientHeight + "px";

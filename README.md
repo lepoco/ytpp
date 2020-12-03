@@ -16,8 +16,13 @@ This is an early version so there is still room for improvement.
 ```html
 <div class="ytpp-player"
   data-playlist="PLpsBoYnu3xNbKE_i7crf55E8h7lgHp4bt"
+  data-format="2by1"
+  data-itemsheight="50"
+  data-itemswidth="90"
   data-rounded="true"
+  data-loop="true"
   data-autoplay="true"
+  data-playnext="true"
   data-showcontrols="false"
   data-showtitles="false"
   data-showinfo="false"
@@ -28,7 +33,27 @@ This is an early version so there is still room for improvement.
 **Finally, run the script**
 ```html
 <script>
-  YTPP( { api: 'your_youtube_api_v3_key' } ).Auto();
+  new YTPP( { api: 'your_youtube_api_v3_key' } ).Show();
+</script>
+```
+
+## Global arguments
+You can change the settings for all players during script initialization  
+
+```html
+<script>
+  new YTPP(
+  {
+    debug: true,
+    itemsHeight: 50,
+    itemsWidth: 90,
+    api: 'your_youtube_api_v3_key',
+    show:
+    {
+      controls: true,
+      related: false
+    }
+  }).Show();
 </script>
 ```
 
@@ -38,6 +63,8 @@ This is an early version so there is still room for improvement.
 | **api** | Your private YouTube API V3 key<br/>Default: **''** |
 | **playlist** | Playlist embed ID<br/>Default: **''** |
 | **format*** | The aspect ratio of movies in your playlist<br/>Available: **16by9, 21by9, 2by1**<br/>Default: **'16by9'** |
+| **itemsheight*** | The height of a single element in the slider.<br/>Default: **70** (px) |
+| **itemswidth*** | The width of a single element in the slider.<br/>Default: **110** (px) |
 | **container*** | The HTML element that the player will be placed in<br/>Default: **null** |
 | **rounded*** | Adds rounded edges to the player and carousel items<br/>Default: **true** |
 | **playnext*** | Automatically play next videos<br/>Default: **true** |
