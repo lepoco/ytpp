@@ -336,6 +336,8 @@ class YTPP
 				'fs':             0,
 				'playsinline':    1,
 				'modestbranding': 1,
+				'list':           playerData.playlist,
+				'listType':       playerData.playNext ? 'playlist' : 'none',
 				'loop':           playerData.loop ? 1 : 0,
 				'showinfo':       playerData.showInfo ? 1 : 0,
 				'autoplay':       playerData.autoplay ? 1 : 0,
@@ -368,6 +370,12 @@ class YTPP
 		let player = playerData.player;
 		let carouselContainer = document.createElement('div');
 		carouselContainer.classList.add('ytpp-carousel');
+
+		let carouselTrack = document.createElement('div');
+		carouselTrack.classList.add('ytpp-carousel-track');
+
+		let carouselStrip = document.createElement('div');
+		carouselStrip.classList.add('ytpp-carousel-strip');
 
 		let carouselItem;
 		for (let i = 0; i < playerData.videos.length; i++)
@@ -404,9 +412,17 @@ class YTPP
 				carouselItem.appendChild(title);
 			}
 
-			carouselContainer.appendChild(carouselItem);
+			carouselStrip.appendChild(carouselItem);
 		}
+
+		carouselTrack.appendChild(carouselStrip);
+		carouselContainer.appendChild(carouselTrack);
 		playerData.container.appendChild(carouselContainer);
+
+		carouselTrack.style.width = 'calc(110px * ' + playerData.videos.length + ')';
+
+		//console.log(carouselTrack.clientHeight + "px");
+		//carouselContainer.style.minHeight = carouselTrack.clientHeight + "px";
 	}
 
 	IsDebug()
