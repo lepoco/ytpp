@@ -1,7 +1,6 @@
-![Logo](https://github.com/rapiddev/ytpp/blob/main/.github/screenshot-1.jpg?raw=true)
+![Banner](https://github.com/rapiddev/ytpp/blob/main/.github/screenshot-1.jpg?raw=true)
 # YouTube Playlist Player
-[![](https://data.jsdelivr.com/v1/package/gh/rapiddev/ytpp/badge)](https://www.jsdelivr.com/package/gh/rapiddev/ytpp)  
-[Created with ![heart](http://i.imgur.com/oXJmdtz.gif) in Poland by RapidDev](https://rdev.cc/)<br />
+[Created with ❤ in Poland by lepo.co](https://dev.lepo.co/)  
 A simple way to display playlists nicely on your website. Reponsively, using YT API V3.  
 This is an early version so there is still room for improvement.
 
@@ -77,3 +76,7 @@ You can change the settings for all players during script initialization
 | **debug*** | It displays a lot of information. Do not use in production.<br/>Default: **false** |
 
 *optional
+
+## License
+YTPP is free and open source software licensed under **MIT License**. You can use it in private and commercial projects.  
+Keep in mind that you must include a copy of the license in your project.

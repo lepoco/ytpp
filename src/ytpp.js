@@ -1,8 +1,12 @@
 /*!
- * YTPP v1.0.3 (https://github.com/rapiddev/ytpp)
- * Copyright 2011-2020 The RapidDev | Leszek Pomianowski (https://rdev.cc/)
- * Licensed under MPL-2.0 (https://github.com/rapiddev/ytpp/blob/main/LICENSE)
+ * YTPP v1.0.3
+ *
+ * This Source Code Form is subject to the terms of the MIT License.
+ * If a copy of the MIT was not distributed with this file, You can obtain one at https://opensource.org/licenses/MIT.
+ * Copyright (C) 2021 Leszek Pomianowski | lepo.co
+ * All Rights Reserved.
  */
+
 class YTPP {
 
     constructor(configuration = null) {
